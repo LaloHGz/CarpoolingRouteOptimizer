@@ -2,9 +2,9 @@
 :root {
     /* --primary: #004C8C; */
     --primary:#39A0ED;
-    --secondary: #2DD881;
+    /* --secondary: #2DD881;
     --little: #FFCA3A;
-    --highligth: #FF595E;
+    --highligth: #FF595E; */
     --background: #FEFDFF;
     --background_secondary: #efeef0; 
 }
@@ -15,6 +15,11 @@ body {
     height: 100vh;
     width: 100vw;
 }
+
+h1 {
+    font-weight: 800;
+}
+
 
 #login {
     height: 100vh;
@@ -43,7 +48,26 @@ body {
     color: var(--primary);
 }
 
+#btn-register:hover {
+    background-color: var(--primary);
+    color: var(--background);
+}
+
 #right {
     background-image: url("https://images.unsplash.com/photo-1533027052290-2b4ece075c42?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80");
 }
+
+#right.register {
+    background-image: url("https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1500&q=80");
+}
+
+.signIn {
+    display: inline;
+}
+
+a.signIn {
+    color: var(--primary);
+}
+
+
 

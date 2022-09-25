@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+    
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <link rel="icon" href="/img/favicon.ico?v=2"  type="image/x-icon"> -->
+  
+  <!-- Bootstrap -->
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;800&display=swap" rel="stylesheet">    
+  
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
+  <title>Home</title>
+  <link rel="stylesheet" href="/webApp/public/css/home.css">
+</head>
+<body>
+    <nav class="navbar navbar-light mo-navba navbar-expand-lg">
+        <div class="container">
+          <a class="navbar-brand" href="/">
+            <!-- <span id="title">Pruebas.py</span> -->
+            <img id="logo" src="/webApp/public/src/logo_light.png" alt="">
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+              <a class="nav-link" href="#">Employees</a>
+              <a class="nav-link" href="#">Vehicles</a>
+            </div>
+          </div>
+          <form class="d-flex" role="search">
+            <button class="btn btn-outline-danger" type="submit">Log out</button>
+          </form>
+        </div>
+      </nav>   
+    <!--  Home Section -->
+    <section id="home">
+        <section id="routes">
+            <div id="left">
+                <div style="width: 100%"><iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=es&amp;q=Les%20Rambles,%201%20Barcelona,%20Spain+(Mi%20nombre%20de%20egocios)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.gps.ie/car-satnav-gps/">Car GPS</a></iframe></div>
+            </div>
+            <div id="right">
+                <div class="container">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <table class="table table-bordered table-hover">
+                          <thead>
+                            <tr>
+                                <td>Vehicle</td>
+                                <td>ID</td>
+                                <td>Nombre</td>
+                                <td>Hora</td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <!-- <% if (curso) { %>
+                              <% for(var i=0; i < curso.length; i++) { %> -->
+                                <tr>
+                                  <td>
+                                    <!-- <%= (i + 1) %> -->
+                                  </td>
+                                  <td>
+                                    <!-- <%= curso[i].nombre %> -->
+                                  </td>
+                                  <td>
+                                    <!-- <%= curso[i].descripcion %> -->
+                                  </td>
+                                </tr>
+                                <!-- <% } %>
+                                  <% } %> -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+        </section>
+    </section>
+
+    
+</body>
+</html>
