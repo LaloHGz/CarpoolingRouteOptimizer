@@ -1,10 +1,11 @@
 from flask import Flask
-from flak_mysql import MySQL
+from flask_mysqldb import MySQL
+from flask import Blueprint, request, render_template, redirect, url_for, flash
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'localhost'
+app.config['MYSQL_PASSWORD'] = 'localhost' or ''
 app.config['MYSQL_HOST'] = 'localhost'
 
 
@@ -12,35 +13,15 @@ mysql = MySQL()
 
 @app.route('/')
 def Index():
-    return 'hello world'
+    return render_template('login.html')
 
-@app.route('/add_worker')
-def addWorker():
-    return 'add worker'
-
-@app.route('/update_worker')
-def updateWorker():
-    return 'update worker'
-
-@app.route('/delete_worker')
-def deleteWorker():
-    return 'delete worker'
-
-@app.route('/add_company')
-def addCompany():
-    return 'add company'
-
-@app.route('/addVehicle')
-def addVehicle():
-    return 'add vehicle'
-
-@app.route('/update_vehicle')
-def updateVehicle():
-    return 'update vehicle'
-
-@app.route('/delete_vehicle')
-def deleteVehicle():
-    return 'delete vehicle'
+# @employees.route('/')
+# def Index():
+#     cur = mysql.connection.cursor()
+#     cur.execute('SELECT * FROM empresa')
+#     data = cur.fetchall()
+#     cur.close()
+#     return render_template('index.html', employees=data)
 
 
 if __name__ == '__main__':
