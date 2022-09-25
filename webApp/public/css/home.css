@@ -64,3 +64,13 @@ body {
     background-color: var(--yellow_hover);
     border-color: var(--yellow_hover);
 }
+
+.btn-add-employee {
+    background-color: var(--yellow);
+    border-color: var(--yellow);
+}
+
+.btn-add-employee:hover {
+    background-color: var(--yellow_hover) !important;
+    border-color: var(--yellow_hover) !important;
+}
