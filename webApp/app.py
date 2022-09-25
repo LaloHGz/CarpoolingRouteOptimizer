@@ -1,5 +1,5 @@
 from flask import Flask
-from flak_mysql import MySQL
+from flask_mysql import MySQL
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
