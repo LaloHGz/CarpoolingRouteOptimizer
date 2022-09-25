@@ -22,6 +22,19 @@ import pulp as p
 import warnings
 warnings.filterwarnings("ignore")
 
+from flask import Flask
+from flask_mysqldb import MySQL
+from flask import Blueprint, request, render_template, redirect, url_for, flash
+
+app = Flask(__name__)
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'localhost' or ''
+app.config['MYSQL_HOST'] = 'localhost'
+
+mysql = MySQL()
+
+
 def routesGenerator(df, model, n_clusters, mode):
 
     nk = n_clusters

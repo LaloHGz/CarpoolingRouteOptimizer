@@ -13,7 +13,7 @@ mysql = MySQL()
 
 @app.route('/')
 def Index():
-    return render_template('login.html')
+    return render_template('home.html')
 
 # @employees.route('/')
 # def Index():
