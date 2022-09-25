@@ -25,13 +25,16 @@ import pulp as p
 import warnings
 import pandas as pd
 import mysql.connector
+
+
 warnings.filterwarnings("ignore")
 
 employees = Blueprint('employees', __name__, template_folder='app/templates')
 
 @employees.route('/')
 def Index():
-    cur = mysql.connection.cur()
+    db = mysql.connector.connect(user = 'root', database = 'hackmty', password = '')
+    cur = db.cursor()    
     cur.execute('SELECT * FROM empresa')
     data = cur.fetchall()
     cur.close()
@@ -44,7 +47,7 @@ def add_employee():
         phone = request.form['phone']
         email = request.form['email']
         try:
-            cur = mysql.connection.cur()
+            cur = mysql.connection.cursor()
             cur.execute(
                 "INSERT INTO empresa (nombre, email, contrasena) VALUES (%s,%s,%s)", (fullname, phone, email))
             mysql.connection.commit()
@@ -57,7 +60,7 @@ def add_employee():
 
 @employees.route('/edit/<id>', methods=['POST', 'GET'])
 def get_employee(id):
-    cur = mysql.connection.cur()
+    cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM empresa WHERE id_empresa = %s', (id))
     data = cur.fetchall()
     cur.close()
@@ -71,7 +74,7 @@ def update_employee(id):
         fullname = request.form['fullname']
         phone = request.form['phone']
         email = request.form['email']
-        cur = mysql.connection.cur()
+        cur = mysql.connection.cursor()
         cur.execute("""
             UPDATE empresa
             SET nombre = %s,
@@ -87,7 +90,7 @@ def update_employee(id):
 
 @employees.route('/delete/<string:id>', methods=['POST', 'GET'])
 def delete_employee(id):
-    cur = mysql.connection.cur()
+    cur = mysql.connection.cursor()
     cur.execute('DELETE FROM empresa WHERE id_empresa = {0}'.format(id))
     mysql.connection.commit()
     flash('Contact Removed Successfully')
@@ -431,12 +434,8 @@ def run_script():
         costoKilometro = 22.97/9.57
 
         #Lee el archivo
-    # cur = mysql.connection.cur()
-    # cur.execute('SELECT * FROM empresa')
-    # data = cur.fetchall()
-    # cur.close()
-
-        cur = mysql.connection.cur()
+        db = mysql.connector.connect(user = 'root', database = 'hackmty', password = '')
+        cur = db.cursor()
         queryTrabajador = "select id_empresa, nombre, longitud, latitud from trabajador"
         cur.execute(queryTrabajador)
         trabajadorData = cur.fetchall()
@@ -457,11 +456,14 @@ def run_script():
         df_DB = pd.DataFrame (dic)
         df_csv = df_DB.to_csv('coords.csv')
         # -------------------------- ---------------------------- -----------------------
-        cur = mysql.connection.cur()
+        
+        db = mysql.connector.connect(user = 'root', database = 'hackmty', password = '')
+        cur = db.cursor()
         queryVehiculo = "select id_empresa, modelo, capacidad, rendimiento from vehiculo"
         cur.execute(queryVehiculo)
         vehiculoData = cur.fetchall()
         cur.close()
+
 
         all_id_vehiculo = []
         all_modelo = []
@@ -516,10 +518,10 @@ def run_script():
         
     main()
     
-    cur = mysql.connection.cur()
+    db = mysql.connector.connect(user = 'root', database = 'hackmty', password = '')
+    cur = db.cursor()
     cur.execute('SELECT * FROM empresa')
     data = cur.fetchall()
     cur.close()
-    return render_template('index.html', employees = data)
-
-    
+    return render_template('index.html', employees=data)
+        

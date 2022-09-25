@@ -5,4 +5,4 @@ app.register_blueprint(employees)
 
 # starting the app
 if __name__ == "__main__":
-    app.run(port=3019, debug=True)
+    app.run(port=3025, debug=True)
