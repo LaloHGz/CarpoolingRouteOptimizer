@@ -18,18 +18,21 @@
   
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
-  <title>Login</title>
+  <title>Register</title>
   <link rel="stylesheet" href="/webApp/public/css/login.css">
-  <link rel="stylesheet" href="/webApp/public/css/register.css">
 </head>
 <body>
-    <!-- Login Section -->
+    <!-- Register Section -->
     <section id="login">
         <div id="left">
           <p class="company">Pruebas.py</p>
-          <h1>Welcome Back</h1>
-          <p class="message">Please enter your details</p>
+          <h1>Sign Up</h1>
+          <p class="message">Create an account to start using pruebas.py</p>
           <form class="forms" id="formLogin" action="/login" method="post">
+            <div class="mb-3">
+                <label for="company" class="form-label">Company Name</label>
+                <input type="text" class="form-control" id="company" placeholder="Enter your company name">
+              </div>
             <div class="mb-3">
               <label for="email" class="form-label">Email address</label>
               <input type="email" class="form-control" id="email" placeholder="Enter your email">
@@ -39,12 +42,13 @@
               <input class="form-control" type="password" id="password" name="password" placeholder="Enter your password">
             </div>
             <div>                    
-                <button id="btn-login" class="mb-3 btn btn-primary" type="submit" >Login</button>
-                <a id="btn-register" href="/register" class="mb-3 btn btn-outline-primary" type="submit">Sign Up</a>
+                <button id="btn-login" class="mb-3 btn btn-primary" type="submit" >Sign Up</button>
+                <p class="signIn">Already a member?</p>
+                <a href="" class="signIn">Sign In</a>
             </div>
         </form>
         </div>
-        <div id="right">
+        <div id="right" class="register">
           
         </div>
     </section>
