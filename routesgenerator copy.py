@@ -357,7 +357,17 @@ def main():
     costoKilometro = 22.97/9.57
 
     #Lee el archivo
-    df=pd.DataFrame(pd.read_csv('coords.csv'))
+    import mysql.connector as connection
+    try:
+        mydb = connection.connect(host="localhost", database = 'hackmty', user="root", passwd="root", use_pure=True)
+        query = "Select * from trabajador;"
+        df = pd.read_sql(query,mydb)
+        mydb.close() #close the connection
+    except Exception as e:
+        mydb.close()
+        print(str(e))
+        
+    # df=pd.DataFrame(pd.read_csv('coords.csv'))
 
     #crea la información de las rutas 
     dfrutasdata= routesData(df, 3)
