@@ -385,9 +385,10 @@ def main():
     
     #Obteniendo los resultados finales
     results = generate_results(df, itinerarios, grupos)
-    
-    print(ruteoOptimo)
-    print(results)
+    results.to_csv("Itinerario.csv")
+    #print(ruteoOptimo)
+    #print(results)
+    #results
 
     
 if __name__ == "__main__":
