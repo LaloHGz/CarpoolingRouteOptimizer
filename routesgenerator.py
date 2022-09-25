@@ -17,6 +17,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.mixture import GaussianMixture
 from sklearn.cluster import AffinityPropagation
 from IPython.display import display
+import pulp as p
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -44,13 +45,13 @@ def routesGenerator(df, model, n_clusters, mode):
 
     z = folium.Map(location=[25.65240416152182, -100.29108458215048], tiles='cartodbpositron', zoom_start=13)
     colors = ['green', 'red', 'blue', 'yellow', 'purple', 'brown', 'grey', 'pink']
-    keyAPI = '5b3ce3597851110001cf624833a658979f0e4546bbe20c838d35cc6b'
+    keyAPI = '5b3ce3597851110001cf62487aa9e3365cab4761927b69dba7c12b8b'
     times = []
     distanceS = []
 
 
     #ors_client = 
-
+    results = []
     #if (1==1):
     #    i=0
     for i in range(nk):
@@ -134,6 +135,8 @@ def routesGenerator(df, model, n_clusters, mode):
             vehicles=vehicles,
             geometry=True
         )
+        
+        results.append(result)
 
         # Add the output to the map
         for color, route in zip([colors[i],colors[i],colors[i]], result['routes']):
@@ -185,7 +188,7 @@ def routesGenerator(df, model, n_clusters, mode):
     elif (mode == 4):
         return (times,distanceS)
     elif (mode == 5):
-        return result
+        return results
 
 def routesData(df, nMaxRutas):
     maxRutas = nMaxRutas
@@ -240,8 +243,8 @@ def seleccionaralgoritmo(df):
     #best[1] = dfporK.columns[best[1]]
     return best    
 
-def itinerariosgenerator(df,grupos):
-    result =routesGenerator(df, 1,2,5)
+def itinerariosgenerator(df, algoritmo, grupos):
+    result = routesGenerator(df, algoritmo, grupos, 5)
     itinerarios = []
     for i in range(grupos):
         stations = list()
@@ -264,6 +267,55 @@ def itinerariosgenerator(df,grupos):
         itinerarios.append(df_stations_0)
     return itinerarios
 
+def MixedIntegerProgramming(df, flota, sal, grupos, algoritmo, itinerarios):
+    
+    #Generando variables para LP
+    ruteo = routesGenerator(df, algoritmo, grupos, 4)
+    n = len(flota)                                                                  #Camiones
+    m = grupos                                                                      #Rutas
+    s = sal                                                                         #Salario por hora
+    C = [23.09/i for i in list(flota['rendimiento (kilometro/litro)'])]             #Lista con los rendimientos de gasolina en $/km
+    T = ruteo[0]                                                                    #Lista de Tiempos de cada ruta                                                  #Lista recortada
+    D = ruteo[1]                                                                    #Lista de distancia de cada ruta
+    V = list(flota['Volumen de caja (cuanto puede cargar)'])                        #Lista de volumenes de cada camion
+    K = [len(itinerarios[i]) for i in range(grupos)]                                #Lista de demandas de volumen de cada ruta
+
+    #Variables para PULP
+    camiones = list(range(0,n))
+    rutas = list(range(0,m))
+    
+    #Crea el problema LP
+    prob = p.LpProblem("RuteoOptimo", p.LpMinimize)     
+
+    #Crea la variable X, tiene maximo de 5 por ahora
+    X=p.LpVariable.dicts("X",[(i,j) for i in camiones for j in rutas],0, 5, p.LpInteger)    
+    
+    #Funcion Objetivo
+    prob+= p.lpSum(X[(i,j)] * (D[j]*C[i] + T[j]*s) for i in camiones for j in rutas) 
+     
+    #Restricciones
+    # for i in camiones:
+    #     prob+= p.lpSum(X[(i,j)]*(T[j]) for j in rutas) <= 9
+
+    #Restriccion de cumplimiento de demanda 
+    for j in rutas:
+        prob+=p.lpSum(X[(i,j)]*V[i] for i in camiones) >= K[j]
+        
+    #Resolviendo
+    prob.solve()
+    cost = p.value(prob.objective)
+    
+    ruteoOptimo=pd.DataFrame({'Camiones':[],'Rutas':[]})
+    for i in camiones:
+        for j in rutas:
+            if(X[(i,j)].varValue>0):
+                for k in range(0,int(X[(i,j)].varValue)):
+                    ruteoOptimo.loc[len(ruteoOptimo)]=[i,j]
+                    
+    ruteoOptimo['Volumen'] = [V[int(h)] for h in ruteoOptimo['Camiones']]
+
+    return cost, ruteoOptimo
+    
 def main():
 
     #Salario de choferes $/hora
@@ -289,8 +341,12 @@ def main():
 
     routesGenerator(df, algoritmo, grupos, 2).save('map1.html')
 
-    itinerarios = itinerariosgenerator(df,grupos)
+    itinerarios = itinerariosgenerator(df, algoritmo, grupos)
+    print(itinerarios[0])
+    
+    #Leyendo el archivo de flota
+    flota = pd.read_csv('Flota.csv')
 
-
+    
 if __name__ == "__main__":
     main()
