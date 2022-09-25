@@ -1,5 +1,3 @@
-,user_name,email
-0,phon2fsd,nombre2983
-1,981u2389,empresa1
-2,e1.gmail.com,e1
-3,e1@gmail.com,e1
+,id_empresa,nombre,all_longitud,all_latitud
+0,2,trab1,100,48
+1,2,trab2,200,44

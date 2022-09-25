@@ -23,13 +23,15 @@ from sklearn.cluster import AffinityPropagation
 from IPython.display import display
 import pulp as p
 import warnings
+import pandas as pd
+import mysql.connector
 warnings.filterwarnings("ignore")
 
 employees = Blueprint('employees', __name__, template_folder='app/templates')
 
 @employees.route('/')
 def Index():
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cur()
     cur.execute('SELECT * FROM empresa')
     data = cur.fetchall()
     cur.close()
@@ -42,7 +44,7 @@ def add_employee():
         phone = request.form['phone']
         email = request.form['email']
         try:
-            cur = mysql.connection.cursor()
+            cur = mysql.connection.cur()
             cur.execute(
                 "INSERT INTO empresa (nombre, email, contrasena) VALUES (%s,%s,%s)", (fullname, phone, email))
             mysql.connection.commit()
@@ -55,7 +57,7 @@ def add_employee():
 
 @employees.route('/edit/<id>', methods=['POST', 'GET'])
 def get_employee(id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cur()
     cur.execute('SELECT * FROM empresa WHERE id_empresa = %s', (id))
     data = cur.fetchall()
     cur.close()
@@ -69,7 +71,7 @@ def update_employee(id):
         fullname = request.form['fullname']
         phone = request.form['phone']
         email = request.form['email']
-        cur = mysql.connection.cursor()
+        cur = mysql.connection.cur()
         cur.execute("""
             UPDATE empresa
             SET nombre = %s,
@@ -85,7 +87,7 @@ def update_employee(id):
 
 @employees.route('/delete/<string:id>', methods=['POST', 'GET'])
 def delete_employee(id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cur()
     cur.execute('DELETE FROM empresa WHERE id_empresa = {0}'.format(id))
     mysql.connection.commit()
     flash('Contact Removed Successfully')
@@ -118,7 +120,7 @@ def run_script():
 
         z = folium.Map(location=[25.65240416152182, -100.29108458215048], tiles='cartodbpositron', zoom_start=13)
         colors = ['green', 'red', 'blue', 'yellow', 'purple', 'brown', 'grey', 'pink']
-        keyAPI = '5b3ce3597851110001cf624875f5f3899e79410bac3b8d81a1bb6096'
+        keyAPI = '5b3ce3597851110001cf62485ef10c84738f470799e1553d08477a06'
         times = []
         distanceS = []
 
@@ -286,7 +288,7 @@ def run_script():
         costokilometro = costokilometro
         dfCopy = dfroutesdata.copy()
         dfCostos = pd.DataFrame()
-        dfCostos['K'] = [1,2]
+        dfCostos['K'] = list(range(1, len(dfroutesdata) + 1))
 
         for j in range(4):
             costo = dfCopy[dfCopy.columns[2*j+1]]*177.525*dfCopy[dfCopy.columns[0]]+dfCopy[dfCopy.columns[2*j+2]]*costokilometro
@@ -429,16 +431,65 @@ def run_script():
         costoKilometro = 22.97/9.57
 
         #Lee el archivo
+    # cur = mysql.connection.cur()
+    # cur.execute('SELECT * FROM empresa')
+    # data = cur.fetchall()
+    # cur.close()
+
+        cur = mysql.connection.cur()
+        queryTrabajador = "select id_empresa, nombre, longitud, latitud from trabajador"
+        cur.execute(queryTrabajador)
+        trabajadorData = cur.fetchall()
+        cur.close()
+
+        all_Vol = []
+        all_nombre = []
+        all_longitud = []
+        all_latitud = []
+
+        for  id_empresa, nombre, longitud, latitud in trabajadorData:
+            all_Vol.append(1)
+            all_nombre.append(nombre)
+            all_longitud.append(longitud)
+            all_latitud.append(latitud)
+
+        dic = {'nombre' : all_nombre, 'Lat' : all_latitud, 'Lon' : all_longitud, "Volumen" : all_Vol}
+        df_DB = pd.DataFrame (dic)
+        df_csv = df_DB.to_csv('coords.csv')
+        # -------------------------- ---------------------------- -----------------------
+        cur = mysql.connection.cur()
+        queryVehiculo = "select id_empresa, modelo, capacidad, rendimiento from vehiculo"
+        cur.execute(queryVehiculo)
+        vehiculoData = cur.fetchall()
+        cur.close()
+
+        all_id_vehiculo = []
+        all_modelo = []
+        all_capacidad = []
+        all_rendimiento = []
+
+        for  id_empresa, modelo, capacidad, rendimiento in vehiculoData:
+            all_id_vehiculo.append(id_empresa)
+            all_modelo.append(modelo)
+            all_capacidad.append(capacidad)
+            all_rendimiento.append(rendimiento)
+
+        dic = {'Nom_Tipo_Unidad' : all_id_vehiculo, 'Modelo' : all_modelo, 
+            'Volumen de caja (cuanto puede cargar)' : all_capacidad, 'rendimiento (kilometro/litro)' : all_rendimiento}
+        df_DB = pd.DataFrame (dic)
+        df_csv = df_DB.to_csv('flota.csv')    
+            
+        # DIEF ORIGINAL    
         df=pd.DataFrame(pd.read_csv('coords.csv'))
 
         #crea la información de las rutas 
-        dfrutasdata= routesData(df, 3)
+        dfrutasdata= routesData(df, 4)
 
         #Elimina tiempos mayores a 2 horas
         dfroutesdata = eliminateLongRoutes(dfrutasdata)
 
         #Obtiene el costo de las rutas 
-        dfporK = routesCosto(sal, costoKilometro, dfrutasdata)
+        dfporK = routesCosto(sal, costoKilometro, dfroutesdata)
 
         #Selecciona el mejor algoritmo de machine learning
         [grupos, algoritmo] = seleccionaralgoritmo(dfporK)
@@ -457,7 +508,7 @@ def run_script():
         
         #Obteniendo los resultados finales
         results = generate_results(df, itinerarios, grupos)
-        results.to_csv("Itinerario.csv")
+        results.to_json("Itinerario.json")
         #print(ruteoOptimo)
         #print(results)
         #results
@@ -465,7 +516,7 @@ def run_script():
         
     main()
     
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cur()
     cur.execute('SELECT * FROM empresa')
     data = cur.fetchall()
     cur.close()

@@ -20,8 +20,10 @@ from sklearn.cluster import AffinityPropagation
 from IPython.display import display
 import pulp as p
 import warnings
+import pandas as pd
+import mysql.connector
 warnings.filterwarnings("ignore")
-
+   
 def routesGenerator(df, model, n_clusters, mode):
 
     nk = n_clusters
@@ -46,7 +48,7 @@ def routesGenerator(df, model, n_clusters, mode):
 
     z = folium.Map(location=[25.65240416152182, -100.29108458215048], tiles='cartodbpositron', zoom_start=13)
     colors = ['green', 'red', 'blue', 'yellow', 'purple', 'brown', 'grey', 'pink']
-    keyAPI = '5b3ce3597851110001cf624875f5f3899e79410bac3b8d81a1bb6096'
+    keyAPI = '5b3ce3597851110001cf62485ef10c84738f470799e1553d08477a06'
     times = []
     distanceS = []
 
@@ -214,7 +216,7 @@ def routesCosto(salario, costokilometro, dfroutesdata):
     costokilometro = costokilometro
     dfCopy = dfroutesdata.copy()
     dfCostos = pd.DataFrame()
-    dfCostos['K'] = [1,2]
+    dfCostos['K'] = list(range(1, len(dfroutesdata) + 1))
 
     for j in range(4):
         costo = dfCopy[dfCopy.columns[2*j+1]]*177.525*dfCopy[dfCopy.columns[0]]+dfCopy[dfCopy.columns[2*j+2]]*costokilometro
@@ -293,7 +295,7 @@ def MixedIntegerProgramming(df, flota, sal, grupos, algoritmo, itinerarios):
     
     #Funcion Objetivo
     prob+= p.lpSum(X[(i,j)] * (D[j]*C[i] + T[j]*s) for i in camiones for j in rutas) 
-     
+    
     #Restricciones
     # for i in camiones:
     #     prob+= p.lpSum(X[(i,j)]*(T[j]) for j in rutas) <= 9
@@ -357,26 +359,60 @@ def main():
     costoKilometro = 22.97/9.57
 
     #Lee el archivo
-    import mysql.connector as connection
-    try:
-        mydb = connection.connect(host="localhost", database = 'hackmty', user="root", passwd="root", use_pure=True)
-        query = "Select * from trabajador;"
-        df = pd.read_sql(query,mydb)
-        mydb.close() #close the connection
-    except Exception as e:
-        mydb.close()
-        print(str(e))
+    db = mysql.connector.connect(user = 'root', database = 'hackmty', password = '')
+    cursor = db.cursor()
+
+    queryTrabajador = "select id_empresa, nombre, longitud, latitud from trabajador"
+    cursor.execute(queryTrabajador)
+    trabajadorData = cursor.fetchall()
+
+    all_Vol = []
+    all_nombre = []
+    all_longitud = []
+    all_latitud = []
+
+    for  id_empresa, nombre, longitud, latitud in trabajadorData:
+        all_Vol.append(1)
+        all_nombre.append(nombre)
+        all_longitud.append(longitud)
+        all_latitud.append(latitud)
+
+    dic = {'nombre' : all_nombre, 'Lat' : all_latitud, 'Lon' : all_longitud, "Volumen" : all_Vol}
+    df_DB = pd.DataFrame (dic)
+    df_csv = df_DB.to_csv('coords.csv')
+    # -------------------------- ---------------------------- -----------------------
+
+    queryVehiculo = "select id_empresa, modelo, capacidad, rendimiento from vehiculo"
+    cursor.execute(queryVehiculo)
+    vehiculoData = cursor.fetchall()
+
+    all_id_vehiculo = []
+    all_modelo = []
+    all_capacidad = []
+    all_rendimiento = []
+
+    for  id_empresa, modelo, capacidad, rendimiento in vehiculoData:
+        all_id_vehiculo.append(id_empresa)
+        all_modelo.append(modelo)
+        all_capacidad.append(capacidad)
+        all_rendimiento.append(rendimiento)
+
+    dic = {'Nom_Tipo_Unidad' : all_id_vehiculo, 'Modelo' : all_modelo, 
+        'Volumen de caja (cuanto puede cargar)' : all_capacidad, 'rendimiento (kilometro/litro)' : all_rendimiento}
+    df_DB = pd.DataFrame (dic)
+    df_csv = df_DB.to_csv('flota.csv')    
         
-    # df=pd.DataFrame(pd.read_csv('coords.csv'))
+    # DIEF ORIGINAL    
+    df=pd.DataFrame(pd.read_csv('coords.csv'))
 
     #crea la información de las rutas 
-    dfrutasdata= routesData(df, 3)
+    dfrutasdata= routesData(df, 4)
 
     #Elimina tiempos mayores a 2 horas
     dfroutesdata = eliminateLongRoutes(dfrutasdata)
 
     #Obtiene el costo de las rutas 
-    dfporK = routesCosto(sal, costoKilometro, dfrutasdata)
+    dfporK = routesCosto(sal, costoKilometro, dfroutesdata)
 
     #Selecciona el mejor algoritmo de machine learning
     [grupos, algoritmo] = seleccionaralgoritmo(dfporK)
@@ -395,10 +431,10 @@ def main():
     
     #Obteniendo los resultados finales
     results = generate_results(df, itinerarios, grupos)
+    results.to_json("Itinerario.json")
+    #print(ruteoOptimo)
+    #print(results)
+    #results
     
-    print(ruteoOptimo)
-    print(results)
-
     
-if __name__ == "__main__":
-    main()
+main()
