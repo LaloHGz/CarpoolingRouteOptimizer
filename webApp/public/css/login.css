@@ -1,0 +1,49 @@
+/* Font that we uses in all the webpage */
+:root {
+    /* --primary: #004C8C; */
+    --primary:#39A0ED;
+    --secondary: #2DD881;
+    --little: #FFCA3A;
+    --highligth: #FF595E;
+    --background: #FEFDFF;
+    --background_secondary: #efeef0; 
+}
+
+
+body {
+    font-family: 'Raleway', sans-serif;
+    height: 100vh;
+    width: 100vw;
+}
+
+#login {
+    height: 100vh;
+    width: 100vw;
+    /* padding: 4rem; */
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+#left {
+    padding: 9rem;
+    background-color: var(--background);
+}
+
+#btn-login {
+    display: block;
+    width: 100%;
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+#btn-register {
+    display: block;
+    width: 100%;
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+#right {
+    background-image: url("https://images.unsplash.com/photo-1533027052290-2b4ece075c42?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80");
+}
+
