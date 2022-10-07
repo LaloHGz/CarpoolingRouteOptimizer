@@ -497,7 +497,7 @@ def run_script():
         [grupos, algoritmo] = seleccionaralgoritmo(dfporK)
 
         #Generando el mapa con las rutas
-        routesGenerator(df, algoritmo, grupos, 2).save('map1.html')
+        routesGenerator(df, algoritmo, grupos, 2).save('/static/map1.html')
 
         #Generando los itinerarios de orden de rutas
         itinerarios = itinerariosgenerator(df, algoritmo, grupos)
@@ -510,7 +510,7 @@ def run_script():
         
         #Obteniendo los resultados finales
         results = generate_results(df, itinerarios, grupos)
-        results.to_json("Itinerario.json")
+        results.to_html("/static/Itinerario.html")
         #print(ruteoOptimo)
         #print(results)
         #results

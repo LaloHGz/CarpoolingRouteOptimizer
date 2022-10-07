@@ -19,22 +19,22 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
   <title>Vehicles</title>
-  <link rel="stylesheet" href="/webApp/public/css/home.css">
+  <link rel="stylesheet" href="/webApp/static/css/home.css">
 </head>
 <body>
     <nav class="navbar navbar-light mo-navba navbar-expand-lg">
         <div class="container">
           <a class="navbar-brand" href="/">
             <!-- <span id="title">Pruebas.py</span> -->
-            <img id="logo" src="/webApp/public/src/logo_light.png" alt="">
+            <img id="logo" src="/webApp/static/src/logo_light.png" alt="">
           </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-              <a class="nav-link" href="#">Home</a>
-              <a class="nav-link" href="#">Employees</a>
+              <a class="nav-link" href="/home">Home</a>
+              <a class="nav-link" href="/employees">Employees</a>
               <a class="nav-link active" href="#">Vehicles</a>
             </div>
           </div>
@@ -75,7 +75,6 @@
                   <thead>
                     <tr>
                         <td>ID</td>
-                        <td>Name</td>
                         <td>Model</td>
                         <td>Capacity</td>
                         <td>Fuel efficiency (km/l)</td>
@@ -83,32 +82,27 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <!-- <% if (curso) { %>
-                      <% for(var i=0; i < curso.length; i++) { %> -->
+                    <!-- {% for vehicle in vehicles {%} -->
                         <tr>
                           <td>
-                            <!-- <%= (i + 1) %> -->
+                            <!-- {%vehicle.id_vehiculo%} -->
                           </td>
                           <td>
-                            <!-- <%= curso[i].nombre %> -->
+                            <!-- {%vehicle.modelo%} -->
                           </td>
                           <td>
-                            <!-- <%= curso[i].descripcion %> -->
+                            <!-- {%vehicle.capacidad%} -->
                           </td>
                           <td>
-                            <!-- <%= curso[i].descripcion %> -->
+                            <!-- {%vehicle.rendimiento%} -->
                           </td>
                           <td>
-                            <!-- <%= curso[i].descripcion %> -->
-                          </td>
-                          <td>
-                            <a href="/update/<%= curso[i].id_curso%>/<%=curso[i].nombre%>/<%= curso[i].descripcion%>"
+                            <a href="/edit/{{vehicle.id_empresa}}"
                               class="btn-options btn btn-info">Edit</a>
-                            <a href="/delete/<%= curso[i].id_curso %>" class="btn-options btn btn-danger">Delete</a>
+                            <a href="/delete/{{vehicle.id_empresa}}" class="btn-options btn btn-danger">Delete</a>
                           </td>
                         </tr>
-                        <!-- <% } %>
-                          <% } %> -->
+                        <!-- {%}%} -->
                   </tbody>
                 </table>
               </div>
